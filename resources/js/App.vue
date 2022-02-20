@@ -28,7 +28,7 @@
                                 <div class="popup w4 mt1" v-if="showMessageDropDown">
                                     <ul class="menu list pl0 pa0 ma0">
                                         <li class="list" v-for="message in messages" :key="message.user.id">
-                                            <a href="#" class="dd-link pointer hover-bg-moon-gray" @click="clickedMsg(message.user.id, message.id, this)" > 
+                                            <a href="#" class="dd-link pointer hover-bg-moon-gray" @click="clickedMsg(message,message.user.id, message.id, this)" > 
                                                 <div class="message-pop-row" :class="message.is_read == 0 ? 'unread' : ''">
                                                     <div class="left-side">
                                                         <img src="../img/avarta2.jpg" />
@@ -218,13 +218,13 @@ export default {
                     });
             })
         },
-        clickedMsg: function(id, mId,e){
+        clickedMsg: function(mesg, id, mId,e){
             this.$axios.get('/sanctum/csrf-cookie').then(response => {
                 this.$axios.post('/api/message/read', {id:mId})
                     .then(response => {
                         console.log(response)
                         this.showMessageDropDown=!this.showMessageDropDown;
-                        this.$router.push('/message/'+id)
+                        this.$router.push('/message/'+id+'/'+mesg.product_id)
                     })
                     .catch(function (error) {
                         console.error(error);

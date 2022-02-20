@@ -29,7 +29,7 @@ Route::group(['prefix' => 'product', 'middleware' => 'auth:sanctum'], function (
 
 Route::group(['prefix' => 'message', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/', [MessageController::class, 'index']);
-    Route::get('/{id}', [MessageController::class, 'index3']);
+    Route::get('/{id}/{proid}', [MessageController::class, 'index3']);
     Route::get('/msgs', [MessageController::class, 'index2']);
     Route::post('add', [MessageController::class, 'add']);
     Route::post('read', [MessageController::class, 'readMsg']);

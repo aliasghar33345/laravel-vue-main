@@ -31,7 +31,7 @@
                     </button>
                 </div>
                 <div v-if="cUser.id != product.author" class="col-md-12 mb-10">
-                    <button type="submit" class="btn btn-black" @click="this.$router.push('/message/'+product.author)">
+                    <button type="submit" class="btn btn-black" @click="this.$router.push('/message/'+product.author+'/'+product.id)">
                         Message
                     </button>
                 </div>

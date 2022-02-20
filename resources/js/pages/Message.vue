@@ -102,9 +102,10 @@ export default {
         let hasScrollToBottom = ref('');
 
         onMounted(()=>{
+            console.log(route.params.proid)
             // console.log(window.location)
             axios.get('/sanctum/csrf-cookie').then(response => {
-                axios.get('/api/message/'+route.params.id)
+                axios.get('/api/message/'+route.params.id+'/'+route.params.proid)
                     .then(response => {
                         console.log(response.data)
                         messages.value = response.data
@@ -133,7 +134,11 @@ export default {
         const checkMsg = (message)=>{
             if((window.Laravel.user.id == message.user_id && route.params.id == message.to_id)
              || (route.params.id == message.user_id && window.Laravel.user.id == message.to_id)){
-                return true
+                if(route.params.proid == message.product_id){
+                    return true
+                }else{
+                    return false
+                }
             }else{
                 return false
             }
@@ -168,6 +173,7 @@ export default {
                 message:newMessage.value,
                 user: window.Laravel.user,
                 to_id:route.params.id,
+                product_id:route.params.proid,
                 user_id:window.Laravel.user.id
             }
             messages.value.push(mesag);

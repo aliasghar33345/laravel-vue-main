@@ -20,12 +20,13 @@ class MessageController extends Controller
         return $Message;
     }
 
-    public function index3($id)
+    public function index3($id,$proid)
     {
         $Message = Message::where(['user_id'=> $id, 'to_id'=> Auth::user()->id])->update(['is_read' => 1]);
 
         $id = intval($id);
-        $Message = Message::with('user')->where(['user_id'=> Auth::user()->id, 'to_id'=> $id])->orWhere(['user_id'=> $id, 'to_id'=> Auth::user()->id])->orderBy('id', 'ASC')->get();
+        $proid = intval($proid);
+        $Message = Message::with('user')->where('product_id', $proid)->where(['user_id'=> Auth::user()->id, 'to_id'=> $id])->orWhere(['user_id'=> $id, 'to_id'=> Auth::user()->id])->orderBy('id', 'ASC')->get();
         return $Message;
     }
 
@@ -46,44 +47,13 @@ class MessageController extends Controller
     public function add(Request $request)
     {
         $user = Auth::user();
-        var_dump($request->to_id);
         $messages = $user->messages()->create([
             'message'=> $request->message,
             'to_id'=> intval($request->to_id),
+            'product_id'=> intval($request->product_id),
             'is_read'=> 0
         ]);
         return "Message sent";
     }
 
-    // edit book
-    public function edit($id)
-    {
-        $book = Product::find($id);
-        return response()->json($book);
-    }
-
-    // update book
-    public function update($id, Request $request)
-    {
-        $Product = Product::find($id);
-        if($request->image->extension()){
-            $imageName = time().'.'.$request->image->extension();   //$request->imageName;
-            $resouce_path = public_path('images/');
-            $request->image->move($resouce_path, $imageName);
-            $Product->image = $imageName;
-        }
-        $Product->description = $request->description;
-        $Product->save();
-
-        return response()->json('The book successfully updated');
-    }
-
-    // delete book
-    public function delete($id)
-    {
-        $Product = Product::find($id);
-        $Product->delete();
-
-        return response()->json('The book successfully deleted');
-    }
 }

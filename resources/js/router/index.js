@@ -52,7 +52,7 @@ export const routes = [
     },
     {
         name: 'message',
-        path: '/message/:id',
+        path: '/message/:id/:proid',
         component: Message
     },
     // {
