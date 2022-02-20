@@ -16,6 +16,13 @@ body {
 @import "~@fortawesome/fontawesome-free/scss/regular.scss";
 @import "~@fortawesome/fontawesome-free/scss/brands.scss";
 
+.file-dbtn{
+  background-color: #bb0000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 5px;
+}
 
 .navbar-expand-lg .navbar-collapse {
     display: flex !important;

@@ -3,7 +3,7 @@
         <div class="row page-content">
             <div class="col-md-12" style="padding: 0px 20px">
                 <div class="col-md-12 mb-10">
-                    <img class="detail-image" :src="'/images/'+product.image">
+                    <img class="detail-image" :src="product.image ? '/images/'+product.image.split(',')[0] : ''">
                 </div>
 
                 <div class="col-md-12 detail-description mb-10">
@@ -11,8 +11,8 @@
                 </div>
 
                 <div class="col-md-12 detail-time-location mb-10">
-                    <i class="fa fa-mobile"></i>Mandal
-                    <i class="fa fa-clock"></i>  {{product.created_at}}
+                    <i class="fa fa-mobile"></i>{{product.location}}
+                    <i class="fa fa-clock"></i>  {{product.time}}
                 </div>
 
                 <div class="col-md-12 mb-10">
@@ -20,18 +20,18 @@
                         List
                     </button>
                 </div>
-                <div class="col-md-12 mb-10">
+                <div v-if="cUser.id == product.author" class="col-md-12 mb-10">
                     <button type="submit" class="btn btn-black" @click="this.$router.push('/editproduct/'+product.id)">
                         Edit
                     </button>
                 </div>
-                 <div class="col-md-12 mb-10">
+                 <div v-if="cUser.id == product.author" class="col-md-12 mb-10">
                     <button type="submit" class="btn btn-black" @click="deleteProduct">
                         Delete
                     </button>
                 </div>
-                <div class="col-md-12 mb-10">
-                    <button type="submit" class="btn btn-black" @click="this.$router.push('/message/1')">
+                <div v-if="cUser.id != product.author" class="col-md-12 mb-10">
+                    <button type="submit" class="btn btn-black" @click="this.$router.push('/message/'+product.author)">
                         Message
                     </button>
                 </div>
@@ -46,6 +46,7 @@ export default {
     data() {
         return {
             product:{},
+            cUser:window.Laravel.user
         }
     },
     created() {

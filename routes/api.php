@@ -20,6 +20,7 @@ Route::group(['prefix' => 'books', 'middleware' => 'auth:sanctum'], function () 
 
 Route::group(['prefix' => 'product', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/', [ProductController::class, 'index2']);
+    Route::get('/all', [ProductController::class, 'index']);
     Route::post('add', [ProductController::class, 'add']);
     Route::get('edit/{id}', [ProductController::class, 'edit']);
     Route::post('update/{id}', [ProductController::class, 'update']);
@@ -28,7 +29,10 @@ Route::group(['prefix' => 'product', 'middleware' => 'auth:sanctum'], function (
 
 Route::group(['prefix' => 'message', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/', [MessageController::class, 'index']);
+    Route::get('/{id}', [MessageController::class, 'index3']);
+    Route::get('/msgs', [MessageController::class, 'index2']);
     Route::post('add', [MessageController::class, 'add']);
+    Route::post('read', [MessageController::class, 'readMsg']);
     Route::get('edit/{id}', [MessageController::class, 'edit']);
     Route::post('update/{id}', [MessageController::class, 'update']);
     Route::delete('delete/{id}', [MessageController::class, 'delete']);

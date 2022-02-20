@@ -21390,6 +21390,14 @@ readers do not read off random characters that represent icons */
   content: "";
 }
 
+.file-dbtn {
+  background-color: #bb0000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
 .navbar-expand-lg .navbar-collapse {
   display: flex !important;
   flex-basis: auto;

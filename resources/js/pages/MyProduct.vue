@@ -5,9 +5,9 @@
             <div class="col-md-12 page-content mt-10">
                 <div v-for="product in products" :key="product.id" class="col-md-6 col-sm-6 col-image">
                     <router-link :to="{name: 'productdetail', params: { id: product.id }}">
-                        <img class="product-image"  :src="'/images/'+product.image" />
+                        <img class="product-image"  :src="'/images/'+product.image.split(',')[0]" />
                         <div class="time-location">
-                            {{product.created_at}}
+                            {{product.time}} {{product.location}}
                         </div>
                     </router-link>
                 </div>

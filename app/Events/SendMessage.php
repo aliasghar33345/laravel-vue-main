@@ -18,6 +18,7 @@ class SendMessage implements ShouldBroadcast
 
     public $user;
     public $message;
+    // public $to_id;
 
 
     /**
@@ -29,6 +30,7 @@ class SendMessage implements ShouldBroadcast
     {
         $this->message = $message;
         $this->user = $user;
+        // $this->to_id = $to_id;
     }
 
     /**

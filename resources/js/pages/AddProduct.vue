@@ -4,14 +4,15 @@
             <div class="col-md-12" style="padding: 0px 20px">
                 <form class="product-form" @submit.prevent="saveProduct">
                     <div class="edit-image-wrapper mt-10">
-                        <div class="edit-image-preview" v-if="preview">
-                            <img :src="preview" class="preview-image">
+                        <div class="edit-image-preview" v-for="preview in previews" :key="preview.index">
+                            <img :src="preview" class="preview-image" style="width:100px: height:75px">
+                            
                         </div>
 
                         <div class="edit-image-selector">
                             <div class="file-button">
                                 <label for="select-file"><i class="fa fa-camera"></i></label>
-                                <input type="file" accept="image/*" id="select-file" @change="previewImage"/>
+                                <input type="file" multiple="multiple" name="seletImage[]" accept="image/*" id="select-file" @change="previewImage"/>
                             </div>
                         </div>
                     </div>
@@ -20,12 +21,12 @@
                         <textarea v-model="product.description"></textarea>
                     </div>
 
-                    <div class="edit-location mt-10">
-                        
+                    <div class="edit-location mt-10 w-100">
+                        <input type="text" v-model="product.location" class="w-100" placeholder="Location">
                     </div>
 
-                    <div class="edit-time mt-10">
-
+                    <div class="edit-time mt-10 w-100">
+                        <input type="time" v-model="product.time" class="w-100">
                     </div>
 
                     <div class="col-md-12 mt-10 mb-10">
@@ -43,8 +44,8 @@ export default {
     name: "AddProduct",
     data() {
         return {
-            preview: null,
-            image: null,
+            previews: [],
+            images: [],
             product:{}
         }
     },
@@ -54,25 +55,33 @@ export default {
         previewImage: function(event) {
             var input = event.target;
             if (input.files) {
-                var reader = new FileReader();
-                console.log(reader);
-                reader.onload = (e) => {
-                    console.log("preview--", e);
-                    this.preview = e.target.result;
+                for(var i=0; i<input.files.length; i++){
+                    var reader = new FileReader();
+                    console.log(reader);
+                    reader.onload = (e) => {
+                        console.log("preview--", e);
+                        this.previews.push(e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[i])
+                    // this.images.push(input.files[i])
+                    // this.product.image = input.files[0];
+                    // this.product.imageName = input.files[0].name;
                 }
-                reader.readAsDataURL(input.files[0])
-                this.image = input.files[0];
-                this.product.image = input.files[0];
-                this.product.imageName = input.files[0].name;
-                // console.log(this.image);
+                this.images = input.files;
+                console.log(this.images[0]);
+
             }
         },
         saveProduct: function(){
             console.log(this.product)
             var fordata = new FormData();
-            fordata.append('image', this.product.image);
-            fordata.append('imageName', this.product.imageName);
+            for(var i=0; i<this.images.length; i++){
+                fordata.append('images[]', this.images[i]);
+            }
+            // fordata.append('imageName', this.product.imageName);
             fordata.append('description', this.product.description);
+            fordata.append('location', this.product.location);
+            fordata.append('time', this.product.time);
             console.log(fordata);
             this.$axios.get('/sanctum/csrf-cookie').then(response => {
                 this.$axios.post('/api/product/add', fordata)

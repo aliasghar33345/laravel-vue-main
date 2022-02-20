@@ -18,14 +18,16 @@
                 </div>
 
                 <div class="message-container">
-                    <div v-for="message in messages" :key="message.id" class="message-row">
-                        <div class="message-content" :class="getClassName(message.user.name)">
-                            <div class="message-left flex-4">
-                                <img src="../../img/avarta1.jpg" class="user-avarta"/>
-                                <div class="username">{{message.user.name}}</div>
-                            </div>
-                            <div class="message-right flex-8">
-                                {{message.message}}
+                    <div v-for="message in messages" :key="message.id" >
+                        <div v-if="checkMsg(message)" class="message-row">
+                            <div class="message-content" :class="getClassName(message.user.name)">
+                                <div class="message-left flex-4">
+                                    <img src="../../img/avarta1.jpg" class="user-avarta"/>
+                                    <div class="username">{{message.user.name}}</div>
+                                </div>
+                                <div class="message-right flex-8">
+                                    {{message.message}}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -87,19 +89,22 @@
 
 <script>
 import {reactive, inject, ref, onMounted, onUpdated} from 'vue';
+import { useRoute } from "vue-router";
 import axios from 'axios';
 export default {
 
     name: "Message",
         
     setup(props){
+        const route =useRoute()
         let messages = ref([]);
         let newMessage = ref('');
         let hasScrollToBottom = ref('');
 
         onMounted(()=>{
+            // console.log(window.location)
             axios.get('/sanctum/csrf-cookie').then(response => {
-                axios.get('/api/message')
+                axios.get('/api/message/'+route.params.id)
                     .then(response => {
                         console.log(response.data)
                         messages.value = response.data
@@ -112,9 +117,27 @@ export default {
         })
 
         onUpdated(()=>{
-            // scrollBottom();
+            // axios.get('/sanctum/csrf-cookie').then(response => {
+            //     axios.get('/api/message/'+route.params.id)
+            //         .then(response => {
+            //             console.log(response.data)
+            //             messages.value = response.data
+            //             // this.products = response.data;
+            //         })
+            //         .catch(function (error) {
+            //             console.error(error);
+            //         });
+            // });
         })
 
+        const checkMsg = (message)=>{
+            if((window.Laravel.user.id == message.user_id && route.params.id == message.to_id)
+             || (route.params.id == message.user_id && window.Laravel.user.id == message.to_id)){
+                return true
+            }else{
+                return false
+            }
+        }
         const getClassName = (Uname)=>{
             if(window.Laravel.user.name == Uname){
                 return "mine"
@@ -130,22 +153,28 @@ export default {
             }
         }
 
-        window.Echo.private('chat-channel').listen('SendMessage', (e)=>{
-            messages.value.push({
-                message: e.message.message,
-                user: window.Laravel.user
-            })
-        })
+        // window.Echo.private('chat-channel').listen('SendMessage', (e)=>{
+        //     console.log(e)
+        //     if(e.message.to_id == route.params.id){
+        //         messages.value.push({
+        //             message: e.message.message,
+        //             user: window.Laravel.user
+        //         })
+        //     }
+        // })
 
         const sendMessage = async()=>{
             let mesag = {
-                message:newMessage,
+                message:newMessage.value,
                 user: window.Laravel.user,
+                to_id:route.params.id,
+                user_id:window.Laravel.user.id
             }
             messages.value.push(mesag);
             axios.get('/sanctum/csrf-cookie').then(response => {
                 axios.post('/api/message/add', mesag)
                     .then(response => {
+                        newMessage.value = '';
                         // this.$router.push({name: 'myproduct'})
                         console.log(response)
                     })
@@ -161,7 +190,8 @@ export default {
             sendMessage,
             getClassName,
             scrollBottom,
-            hasScrollToBottom
+            hasScrollToBottom,
+            checkMsg
         }
     },
     // data() {
@@ -183,6 +213,7 @@ export default {
     //         let mesag = {
     //             message:this.message,
     //             user: window.Laravel.user,
+    //             to_id:this.$route.params.id
     //         }
     //         messages.value.push(mesag);
     //         this.$axios.get('/sanctum/csrf-cookie').then(response => {

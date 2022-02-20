@@ -55,11 +55,11 @@ export const routes = [
         path: '/message/:id',
         component: Message
     },
-    {
-        name: 'messages',
-        path: '/messages',
-        component: Message
-    },
+    // {
+    //     name: 'messages',
+    //     path: '/messages',
+    //     component: Message
+    // },
     {
         name: 'editproduct',
         path: '/editproduct/:id',

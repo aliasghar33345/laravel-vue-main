@@ -10,9 +10,9 @@
             <div class="col-md-12 page-content">
                 <div v-for="product in products" :key="product.id" class="col-md-6 col-sm-6 col-image">
                      <router-link :to="{name: 'productdetail', params: { id: product.id }}">
-                        <img class="product-image"  :src="'/images/'+product.image" />
+                        <img class="product-image"  :src="'/images/'+product.image.split(',')[0]" />
                         <div class="time-location">
-                            {{product.created_at}}
+                            {{product.time}} {{product.location}}
                         </div>
                     </router-link>
                     <!-- <router-link :to="{name: 'productdetail', params: { id: 1 }}">
@@ -80,7 +80,7 @@ export default {
     },
     created() {
         this.$axios.get('/sanctum/csrf-cookie').then(response => {
-            this.$axios.get('/api/product')
+            this.$axios.get('/api/product/all')
                 .then(response => {
                     console.log(response.data)
                     this.products = response.data;

@@ -17,8 +17,9 @@
 
                     <div class="navbar-collapse" v-else>
                         <div class="message-menu">
-                            <a href="#" @click="this.$router.push('/messages')">
-                            <!-- <a href="#" v-on:click.prevent="showMessageDropDown=!showMessageDropDown; showDropDown=false;"> -->
+                            <div v-if="count > 0" style="margin-left: 40px;margin-bottom: -20px;background-color: red;width: 15px;border: none;border-radius: 50%;">{{count}}</div>
+                            <!-- <a href="#" @click="this.$router.push('/messages')"> -->
+                            <a href="#" v-on:click.prevent="showMessageDropDown=!showMessageDropDown; showDropDown=false;">
                                 <i class="fa fa-envelop"></i>
                                 <img src="../img/envelope-regular.svg" />
                             </a>
@@ -26,21 +27,21 @@
                             <transition name="slide-fade2">
                                 <div class="popup w4 mt1" v-if="showMessageDropDown">
                                     <ul class="menu list pl0 pa0 ma0">
-                                        <li class="list">
-                                            <a href="#" class="dd-link pointer hover-bg-moon-gray" @click="showMessageDropDown=!showMessageDropDown; this.$router.push('/message/1')" > 
-                                                <div class="message-pop-row unread">
+                                        <li class="list" v-for="message in messages" :key="message.user.id">
+                                            <a href="#" class="dd-link pointer hover-bg-moon-gray" @click="clickedMsg(message.user.id, message.id, this)" > 
+                                                <div class="message-pop-row" :class="message.is_read == 0 ? 'unread' : ''">
                                                     <div class="left-side">
                                                         <img src="../img/avarta2.jpg" />
                                                     </div>
                                                     <div class="right-side">
-                                                        <div class="username">Panda</div>
-                                                        <div class="message-line">I dont understand your requirements.</div>
+                                                        <div class="username">{{message.user.name}}</div>
+                                                        <div class="message-line">{{message.message}}</div>
                                                     </div>
                                                 </div>
                                             </a>
                                         </li>
 
-                                        <li class="list">
+                                        <!-- <li class="list">
                                             <a href="#" class="dd-link pointer hover-bg-moon-gray" > 
                                                 <div class="message-pop-row">
                                                     <div class="left-side">
@@ -104,7 +105,7 @@
                                                     </div>
                                                 </div>
                                             </a>
-                                        </li>
+                                        </li> -->
                                     </ul>
                                 </div>
                             </transition>
@@ -170,10 +171,30 @@ export default {
             isLoggedIn: false,
             showDropDown: false,
             messages: [],
-            showMessageDropDown: false
+            showMessageDropDown: false,
+            count:0,
         }
     },
     created() {
+        this.$axios.get('/sanctum/csrf-cookie').then(response => {
+            this.$axios.get('/api/message/msgs')
+                .then(response => {
+                    console.log(response.data)
+                    this.messages = response.data
+                    var messages = response.data
+                    var count=0;
+                    for(var i=0; i<messages.length; i++){
+                        if(messages[i].is_read == 0){
+                            count++;
+                        }
+                    }
+                    this.count = count;
+                    // this.products = response.data;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        });
         if (window.Laravel.isLoggedin) {
             this.isLoggedIn = true
         }
@@ -196,6 +217,20 @@ export default {
                         console.error(error);
                     });
             })
+        },
+        clickedMsg: function(id, mId,e){
+            this.$axios.get('/sanctum/csrf-cookie').then(response => {
+                this.$axios.post('/api/message/read', {id:mId})
+                    .then(response => {
+                        console.log(response)
+                        this.showMessageDropDown=!this.showMessageDropDown;
+                        this.$router.push('/message/'+id)
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            })
+
         }
     },
 }

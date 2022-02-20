@@ -17,6 +17,8 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('image')->nullable();
             $table->string('description')->nullable();
+            $table->string('location')->nullable();
+            $table->time('time')->nullable();
             $table->unsignedBigInteger('author')->nullable();
             $table->timestamps();
         });
