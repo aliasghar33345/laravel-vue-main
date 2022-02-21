@@ -31,7 +31,7 @@
                                             <a href="#" class="dd-link pointer hover-bg-moon-gray" @click="clickedMsg(message,message.user.id, message.id, this)" > 
                                                 <div class="message-pop-row" :class="message.is_read == 0 ? 'unread' : ''">
                                                     <div class="left-side">
-                                                        <img src="../img/avarta2.jpg" />
+                                                        <img :src="'/images/'+message.user.image" />
                                                     </div>
                                                     <div class="right-side">
                                                         <div class="username">{{message.user.name}}</div>

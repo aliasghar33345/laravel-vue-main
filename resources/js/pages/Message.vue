@@ -22,7 +22,7 @@
                         <div v-if="checkMsg(message)" class="message-row">
                             <div class="message-content" :class="getClassName(message.user.name)">
                                 <div class="message-left flex-4">
-                                    <img src="../../img/avarta1.jpg" class="user-avarta"/>
+                                    <img :src="'/images/'+message.user.image" class="user-avarta"/>
                                     <div class="username">{{message.user.name}}</div>
                                 </div>
                                 <div class="message-right flex-8">
