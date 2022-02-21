@@ -6,7 +6,7 @@
                     <div class="col-image message-image-wrapper">
                         <img :src="getProductImage()" class="mesage-image" />
                         <div class="time-location">
-                            19:00 TailWind
+                            {{getTimeLocation()}}
                         </div>
                     </div>
 
@@ -55,6 +55,7 @@ export default {
         let messages = ref([]);
         let newMessage = ref('');
         let productImage = ref('');
+        let product = ref({time:'',location:''});
         let hasScrollToBottom = ref('');
 
         onMounted(()=>{
@@ -70,6 +71,7 @@ export default {
                 axios.get('/api/product/edit/'+route.params.proid)
                     .then(response => {
                         productImage.value = response.data.image.split(',')[0]
+                        product.value = response.data
                     })
                     .catch(function (error) {
                         console.error(error);
@@ -81,6 +83,10 @@ export default {
         onUpdated(()=>{
        
         })
+
+        const getTimeLocation = ()=>{
+            return product.value.time + ' ' + product.value.location
+        }
 
         const checkMsg = (message)=>{
             if((window.Laravel.user.id == message.user_id && route.params.id == message.to_id)
@@ -142,7 +148,8 @@ export default {
             scrollBottom,
             hasScrollToBottom,
             checkMsg,
-            getProductImage
+            getProductImage,
+            getTimeLocation
         }
     },
 }
