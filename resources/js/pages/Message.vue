@@ -4,7 +4,7 @@
             <div class="col-md-12" style="padding: 0px 20px">
                 <div class="message-header mt-10">
                     <div class="col-image message-image-wrapper">
-                        <img src="../../img/product_default.jpg" class="mesage-image" />
+                        <img :src="getProductImage()" class="mesage-image" />
                         <div class="time-location">
                             19:00 TailWind
                         </div>
@@ -31,51 +31,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- <div class="message-row">
-                        <div class="message-content mine">
-                            <div class="message-left flex-4">
-                                <img src="../../img/avarta2.jpg" class="user-avarta"/>
-                                <div class="username">Panda</div>
-                            </div>
-                            <div class="message-right flex-8">
-                                Hello, How are you?
-                            </div>
-                        </div>
-                    </div>
-                    <div class="message-row">
-                        <div class="message-content mine">
-                            <div class="message-left flex-4">
-                                <img src="../../img/avarta2.jpg" class="user-avarta"/>
-                                <div class="username">Panda</div>
-                            </div>
-                            <div class="message-right flex-8">
-                                Hello, How are you?
-                            </div>
-                        </div>
-                    </div>
-                    <div class="message-row">
-                        <div class="message-content mine">
-                            <div class="message-left flex-4">
-                                <img src="../../img/avarta2.jpg" class="user-avarta"/>
-                                <div class="username">Panda</div>
-                            </div>
-                            <div class="message-right flex-8">
-                                Hello, How are you?
-                            </div>
-                        </div>
-                    </div>
-                    <div class="message-row">
-                        <div class="message-content mine">
-                            <div class="message-left flex-4">
-                                <img src="../../img/avarta2.jpg" class="user-avarta"/>
-                                <div class="username">Panda</div>
-                            </div>
-                            <div class="message-right flex-8">
-                                Hello, How are you?
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
 
                 <div class="message-send">
@@ -99,36 +54,32 @@ export default {
         const route =useRoute()
         let messages = ref([]);
         let newMessage = ref('');
+        let productImage = ref('');
         let hasScrollToBottom = ref('');
 
         onMounted(()=>{
-            console.log(route.params.proid)
-            // console.log(window.location)
             axios.get('/sanctum/csrf-cookie').then(response => {
                 axios.get('/api/message/'+route.params.id+'/'+route.params.proid)
                     .then(response => {
-                        console.log(response.data)
                         messages.value = response.data
-                        // this.products = response.data;
                     })
                     .catch(function (error) {
                         console.error(error);
                     });
+
+                axios.get('/api/product/edit/'+route.params.proid)
+                    .then(response => {
+                        productImage.value = response.data.image.split(',')[0]
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                });
             });
+
         })
 
         onUpdated(()=>{
-            // axios.get('/sanctum/csrf-cookie').then(response => {
-            //     axios.get('/api/message/'+route.params.id)
-            //         .then(response => {
-            //             console.log(response.data)
-            //             messages.value = response.data
-            //             // this.products = response.data;
-            //         })
-            //         .catch(function (error) {
-            //             console.error(error);
-            //         });
-            // });
+       
         })
 
         const checkMsg = (message)=>{
@@ -158,15 +109,9 @@ export default {
             }
         }
 
-        // window.Echo.private('chat-channel').listen('SendMessage', (e)=>{
-        //     console.log(e)
-        //     if(e.message.to_id == route.params.id){
-        //         messages.value.push({
-        //             message: e.message.message,
-        //             user: window.Laravel.user
-        //         })
-        //     }
-        // })
+        const getProductImage = ()=>{
+            return '/images/'+productImage.value;
+        }
 
         const sendMessage = async()=>{
             let mesag = {
@@ -181,7 +126,6 @@ export default {
                 axios.post('/api/message/add', mesag)
                     .then(response => {
                         newMessage.value = '';
-                        // this.$router.push({name: 'myproduct'})
                         console.log(response)
                     })
                     .catch(function (error) {
@@ -197,42 +141,9 @@ export default {
             getClassName,
             scrollBottom,
             hasScrollToBottom,
-            checkMsg
+            checkMsg,
+            getProductImage
         }
     },
-    // data() {
-    //     return {
-    //         // messages:[],
-    //         message:'',
-    //     }
-    // },
-    // updated(){
-
-    // },
-    // created() {
-
-    //     console.log(window.Laravel.user)
-    // },
-
-    // methods: {
-    //     sendMessage: function(){
-    //         let mesag = {
-    //             message:this.message,
-    //             user: window.Laravel.user,
-    //             to_id:this.$route.params.id
-    //         }
-    //         messages.value.push(mesag);
-    //         this.$axios.get('/sanctum/csrf-cookie').then(response => {
-    //             this.$axios.post('/api/message/add', mesag)
-    //                 .then(response => {
-    //                     // this.$router.push({name: 'myproduct'})
-    //                     console.log(response)
-    //                 })
-    //                 .catch(function (error) {
-    //                     console.error(error);
-    //                 });
-    //         })
-    //     }
-    // }
 }
 </script>
